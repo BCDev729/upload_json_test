@@ -16,6 +16,7 @@ function MyApp({ Component, pageProps }) {
   const [bundlrBalance, setbundlrBalance] = useState(0)
   const [contract, setContract] = useState()
   const [fileIDs, setFileIDs] = useState([]);
+  const [address, setAddress] = useState()
 
   const { provider } = configureChains(
     [chain.polygonMumbai],
@@ -87,9 +88,9 @@ function MyApp({ Component, pageProps }) {
 
   async function uploadFile(file) {
     try {
-      console.log(bundlrInstance);
         let tx = await bundlrInstance.uploader.upload(file, [{ name: "Content-Type", value: "application/json" }])
         await contract.addFileIDs(tx.data.id);
+        getFileIDs(contract, address)
     } catch (error) {
         console.log(error);
     }
@@ -107,6 +108,7 @@ function MyApp({ Component, pageProps }) {
 
   async function getFileIDs(contract, address) {
     const files = []
+    setAddress(address)
     if(contract) {
       const length = await contract.getFileLength()
       for(let i = 0; i < parseInt(length); i++ ){
